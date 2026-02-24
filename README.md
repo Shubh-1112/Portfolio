@@ -20,8 +20,8 @@ A modern, high-performance portfolio website designed to showcase projects, skil
 
 ## 📂 Project Structure
 
-*   `index.html` - The stylish entry point and loading screen featuring a slice-wipe transition.
-*   `main.html` - The core portfolio page containing all content sections (About, Work, Skills, Hobbies).
+*   `load.html` - The stylish entry point and loading screen featuring a slice-wipe transition.
+*   `index.html` - The core portfolio page containing all content sections (About, Work, Skills, Hobbies).
 *   `styles.css` - The comprehensive stylesheet containing all design tokens, responsive media queries, and UI styling.
 *   `main.js` - Global logic for horizontal scrolling, mobile navigation, carousel features, and GSAP integration.
 *   `Assets/` - Directory containing all optimized imagery, icons, PDF resumes, and animation sequences.
