@@ -30,16 +30,21 @@ A modern, high-performance portfolio website designed to showcase projects, skil
 
 To run this project locally on your machine:
 
-1.  Clone this repository to your local machine:
-    ```bash
-    git clone https://github.com/Shubh-1112/Portfolio.git
-    ```
-2.  Open the cloned directory in your terminal.
-3.  Start a local server. If you have Python installed, you can simply run:
-    ```bash
-    python3 -m http.server 8000
-    ```
-4.  Open your browser and navigate to `http://localhost:8000`.
+**Option 1: Quick View**
+Simply double-click the `index.html` file to open it in your default web browser. 
+*(Note: Some advanced animations or asset loading may require a local server to bypass browser CORS security policies).*
+
+**Option 2: Recommended (VS Code)**
+1. Open the project folder in **Visual Studio Code**.
+2. Install the **Live Server** extension.
+3. Right-click on `index.html` and select **"Open with Live Server"**.
+
+**Option 3: Terminal (Using Python)**
+If you are comfortable with the terminal, you can start a simple static web server:
+```bash
+python3 -m http.server 8000
+```
+Then navigate to `http://localhost:8000`.
 
 ## 🤝 Contact
 
