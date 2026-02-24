@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Loading</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,600,700" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        html {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 120" width="24" height="48"><g><path d="M30 5 L35 15 L32 65 L28 65 L25 15 Z" fill="%23ffffff"/><rect x="22" y="64" width="16" height="8" fill="%23ffffff"/><path d="M26 72 L34 72 L33 88 L27 88 Z" fill="%23ffffff"/><rect x="27" y="88" width="6" height="6" fill="%23ffffff"/></g></svg>') 12 4, auto;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Hide any possible scrollbars globally on the splash page */
+        html,
+        body {
+            -ms-overflow-style: none;
+            /* IE & old Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar,
+        *::-webkit-scrollbar {
+            display: none;
+            /* Chrome, Safari */
+        }
+
+        body {
+            /* Dark cinematic splash to match main page */
+            background-color: #0f0f0f;
+            overflow: hidden;
+            font-family: 'Open Sans', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        body.exiting {
+            animation: fadeToBlack 1s ease-out forwards;
+            animation-delay: 0.8s;
+        }
+
+        @keyframes fadeToBlack {
+            to {
+                background-color: #000;
+            }
+        }
+
+        h1 {
+            position: absolute;
+            font-family: 'Open Sans';
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            left: 50%;
+            top: 58%;
+            transform: translateX(-50%);
+            color: #f5f5f7;
+            letter-spacing: 2px;
+            z-index: 20;
+            transition: opacity 0.5s ease-out;
+        }
+
+        h1.fade-out {
+            opacity: 0;
+        }
+
+        .percentage {
+            position: absolute;
+            font-family: 'Open Sans';
+            font-weight: 700;
+            font-size: 72px;
+            left: 50%;
+            top: 65%;
+            transform: translateX(-50%);
+            color: #ffffff;
+            letter-spacing: 3px;
+            z-index: 20;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .percentage.fade-out {
+            opacity: 0;
+        }
+
+        .body {
+            position: absolute;
+            top: 50%;
+            margin-left: -50px;
+            left: 50%;
+            animation: speeder .4s linear infinite;
+            z-index: 10;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .body.fly-away {
+            animation: flyAway 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes flyAway {
+            0% {
+                left: 50%;
+                transform: translate(2px, 1px) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                left: 150%;
+                transform: translate(0, -50px) rotate(15deg) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .body>span {
+            height: 5px;
+            width: 35px;
+            background: #242424;
+            /* Subtle dark vs background */
+            position: absolute;
+            top: -19px;
+            left: 60px;
+            border-radius: 2px 10px 1px 0;
+        }
+
+        .base span {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-right: 100px solid #2a2a2a;
+            border-bottom: 6px solid transparent;
+        }
+
+        .base span:before {
+            content: "";
+            height: 22px;
+            width: 22px;
+            border-radius: 50%;
+            background: #2a2a2a;
+            position: absolute;
+            right: -110px;
+            top: -16px;
+        }
+
+        .base span:after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-top: 0 solid transparent;
+            border-right: 55px solid #2a2a2a;
+            border-bottom: 16px solid transparent;
+            top: -16px;
+            right: -98px;
+        }
+
+        .face {
+            position: absolute;
+            height: 12px;
+            width: 20px;
+            background: #242424;
+            border-radius: 20px 20px 0 0;
+            transform: rotate(-40deg);
+            right: -125px;
+            top: -15px;
+        }
+
+        .face:after {
+            content: "";
+            height: 12px;
+            width: 12px;
+            background: #2a2a2a;
+            right: 4px;
+            top: 7px;
+            position: absolute;
+            transform: rotate(40deg);
+            transform-origin: 50% 50%;
+            border-radius: 0 0 0 2px;
+        }
+
+        .body>span>span:nth-child(1),
+        .body>span>span:nth-child(2),
+        .body>span>span:nth-child(3),
+        .body>span>span:nth-child(4) {
+            width: 30px;
+            height: 1px;
+            background: #000000;
+            /* Accent red streaks */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.65);
+            position: absolute;
+            animation: fazer1 .2s linear infinite;
+        }
+
+        .body>span>span:nth-child(2) {
+            top: 3px;
+            animation: fazer2 .4s linear infinite;
+        }
+
+        .body>span>span:nth-child(3) {
+            top: 1px;
+            animation: fazer3 .4s linear infinite;
+            animation-delay: -1s;
+        }
+
+        .body>span>span:nth-child(4) {
+            top: 4px;
+            animation: fazer4 1s linear infinite;
+            animation-delay: -1s;
+        }
+
+        @keyframes fazer1 {
+            0% {
+                left: 0;
+            }
+
+            100% {
+                left: -80px;
+                opacity: 0;
+            }
+        }
+
+        @keyframes fazer2 {
+            0% {
+                left: 0;
+            }
+
+            100% {
+                left: -100px;
+                opacity: 0;
+            }
+        }
+
+        @keyframes fazer3 {
+            0% {
+                left: 0;
+            }
+
+            100% {
+                left: -50px;
+                opacity: 0;
+            }
+        }
+
+        @keyframes fazer4 {
+            0% {
+                left: 0;
+            }
+
+            100% {
+                left: -150px;
+                opacity: 0;
+            }
+        }
+
+        @keyframes speeder {
+            0% {
+                transform: translate(2px, 1px) rotate(0deg);
+            }
+
+            10% {
+                transform: translate(-1px, -3px) rotate(-1deg);
+            }
+
+            20% {
+                transform: translate(-2px, 0px) rotate(1deg);
+            }
+
+            30% {
+                transform: translate(1px, 2px) rotate(0deg);
+            }
+
+            40% {
+                transform: translate(1px, -1px) rotate(1deg);
+            }
+
+            50% {
+                transform: translate(-1px, 3px) rotate(-1deg);
+            }
+
+            60% {
+                transform: translate(-1px, 1px) rotate(0deg);
+            }
+
+            70% {
+                transform: translate(3px, 1px) rotate(-1deg);
+            }
+
+            80% {
+                transform: translate(-2px, -1px) rotate(1deg);
+            }
+
+            90% {
+                transform: translate(2px, 1px) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(1px, -2px) rotate(-1deg);
+            }
+        }
+
+        .longfazers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .longfazers.fade-out {
+            opacity: 0;
+        }
+
+        .longfazers span {
+            position: absolute;
+            height: 2px;
+            width: 20%;
+            background: rgba(181, 39, 35, 0.9);
+            box-shadow: 0 0 16px rgba(181, 39, 35, 0.55);
+        }
+
+        .longfazers span:nth-child(1) {
+            top: 20%;
+            animation: lf .6s linear infinite;
+            animation-delay: -5s;
+        }
+
+        .longfazers span:nth-child(2) {
+            top: 40%;
+            animation: lf2 .8s linear infinite;
+            animation-delay: -1s;
+        }
+
+        .longfazers span:nth-child(3) {
+            top: 60%;
+            animation: lf3 .6s linear infinite;
+        }
+
+        .longfazers span:nth-child(4) {
+            top: 80%;
+            animation: lf4 .5s linear infinite;
+            animation-delay: -3s;
+        }
+
+        @keyframes lf {
+            0% {
+                left: 200%;
+            }
+
+            100% {
+                left: -200%;
+                opacity: 0;
+            }
+        }
+
+        @keyframes lf2 {
+            0% {
+                left: 200%;
+            }
+
+            100% {
+                left: -200%;
+                opacity: 0;
+            }
+        }
+
+        @keyframes lf3 {
+            0% {
+                left: 200%;
+            }
+
+            100% {
+                left: -100%;
+                opacity: 0;
+            }
+        }
+
+        @keyframes lf4 {
+            0% {
+                left: 200%;
+            }
+
+            100% {
+                left: -100%;
+                opacity: 0;
+            }
+        }
+
+        /* ================================
+           GSAP Slice Transition Effect
+           ================================ */
+        .slice-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            pointer-events: none;
+            display: flex;
+        }
+
+        .slice {
+            flex: 1;
+            height: 100%;
+            background: #000;
+            transform: translateY(100%);
+            will-change: transform;
+        }
+
+        /* ================================
+           Cinematic Background Layers
+           ================================ */
+        .bg-cinematic {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            /* Behind loader, ahead of body bg */
+            pointer-events: none;
+        }
+
+        .bg-cinematic .bg-sun {
+            position: absolute;
+            left: 50%;
+            top: 42%;
+            transform: translate(-50%, -50%);
+            width: min(64vmin, 720px);
+            height: min(64vmin, 720px);
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%,
+                    rgba(181, 39, 35, 0.85) 0%,
+                    rgba(181, 39, 35, 0.65) 35%,
+                    rgba(181, 39, 35, 0.25) 60%,
+                    rgba(0, 0, 0, 0) 70%);
+            filter: saturate(1.1) blur(0.6px);
+            animation: sunPulse 4.6s ease-in-out infinite;
+        }
+
+        .bg-cinematic .bg-sun::after {
+            content: '';
+            position: absolute;
+            inset: -6vmin;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+                    rgba(255, 107, 91, 0.12) 0%,
+                    rgba(255, 107, 91, 0.08) 40%,
+                    rgba(0, 0, 0, 0) 70%);
+            filter: blur(8px);
+        }
+
+        @keyframes sunPulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(0.98);
+                filter: brightness(1);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.02);
+                filter: brightness(1.08);
+            }
+        }
+
+        .bg-cinematic .bg-aurora {
+            position: absolute;
+            inset: -10%;
+            background: conic-gradient(from 180deg at 50% 50%,
+                    rgba(255, 255, 255, 0.02) 0deg,
+                    rgba(224, 150, 137, 0.06) 60deg,
+                    rgba(181, 39, 35, 0.08) 120deg,
+                    rgba(255, 255, 255, 0.02) 180deg,
+                    rgba(181, 39, 35, 0.06) 240deg,
+                    rgba(224, 150, 137, 0.04) 300deg,
+                    rgba(255, 255, 255, 0.02) 360deg);
+            filter: blur(22px) saturate(1.1);
+            opacity: 0.6;
+            animation: auroraSpin 24s linear infinite;
+        }
+
+        @keyframes auroraSpin {
+            0% {
+                transform: rotate(0deg) scale(1.02);
+            }
+
+            100% {
+                transform: rotate(360deg) scale(1.02);
+            }
+        }
+
+        .bg-cinematic .bg-vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 50%,
+                    rgba(0, 0, 0, 0) 40%,
+                    rgba(0, 0, 0, 0.6) 85%,
+                    rgba(0, 0, 0, 0.95) 100%);
+        }
+
+        .bg-cinematic .bg-embers {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        .bg-cinematic .bg-embers span {
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: var(--size, 3px);
+            height: var(--size, 3px);
+            border-radius: 50%;
+            background: radial-gradient(circle,
+                    #ff6b5b 0%,
+                    #e09689 60%,
+                    rgba(255, 107, 91, 0.6) 100%);
+            box-shadow: 0 0 14px rgba(255, 107, 91, 0.55);
+            filter: blur(0.6px);
+            opacity: var(--opacity, 0.7);
+            transform: translateY(0);
+            animation: emberRise var(--duration, 5s) linear infinite;
+            animation-delay: var(--delay, 0s);
+        }
+
+        @keyframes emberRise {
+            0% {
+                transform: translate(var(--drift-start, 0px), 0) scale(1);
+                opacity: var(--opacity, 0.7);
+            }
+
+            100% {
+                transform: translate(var(--drift, 0px), -110vh) scale(0.85);
+                opacity: 0;
+            }
+        }
+
+        /* Mobile Simple Loader */
+        .simple-loader {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #b52723;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            z-index: 3000;
+        }
+
+        .simple-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(181, 39, 35, 0.15);
+            border-radius: 50%;
+            border-top-color: #b52723;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .body,
+            .longfazers,
+            .bg-embers,
+            .bg-aurora,
+            .bg-sun,
+            .percentage,
+            h1#loadingText {
+                display: none !important;
+            }
+
+            .simple-loader {
+                display: flex !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Cinematic animated background -->
+    <div class="bg-cinematic" aria-hidden="true">
+        <div class="bg-aurora"></div>
+        <div class="bg-sun"></div>
+        <div class="bg-embers" id="bgEmbers"></div>
+        <div class="bg-vignette"></div>
+    </div>
+    <div class="body">
+        <span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </span>
+        <div class="base">
+            <span></span>
+            <div class="face"></div>
+        </div>
+    </div>
+    <div class="longfazers">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <h1 id="loadingText">Loading...</h1>
+    <div class="percentage" id="percentage">0%</div>
+
+    <div class="simple-loader" id="simpleLoader">
+        <div class="simple-spinner"></div>
+        <div>LOADING</div>
+    </div>
+
+    <div class="slice-container" id="sliceContainer">
+        <div class="slice"></div>
+        <div class="slice"></div>
+        <div class="slice"></div>
+        <div class="slice"></div>
+        <div class="slice"></div>
+    </div>
+
+    <script>
+        // Percentage counter animation
+        let currentPercentage = 0;
+        const percentageElement = document.getElementById('percentage');
+        const loadingText = document.getElementById('loadingText');
+        const sliceContainer = document.getElementById('sliceContainer');
+        const rocketBody = document.querySelector('.body');
+        const longfazers = document.querySelector('.longfazers');
+        const bodyElement = document.body;
+        const embersContainer = document.getElementById('bgEmbers');
+
+        // Duration of loading animation in milliseconds (3 seconds)
+        if (window.innerWidth <= 768) {
+            // Mobile Simplified Loading
+            setTimeout(() => {
+                // Trigger GSAP slice wipe directly after a short delay
+                gsap.to(".slice", {
+                    y: "0%",
+                    duration: 0.8,
+                    stagger: 0.10,
+                    ease: "power3.inOut",
+                    onComplete: () => {
+                        window.location.href = 'main.html?entry=1';
+                    }
+                });
+            }, 800);
+        } else {
+            // Desktop Heavy Loading
+            const duration = 3000;
+            const interval = 30; // Update every 30ms for smooth animation
+            const increment = 100 / (duration / interval);
+
+            const counterInterval = setInterval(() => {
+                currentPercentage += increment;
+
+                if (currentPercentage >= 100) {
+                    currentPercentage = 100;
+                    percentageElement.textContent = '100%';
+                    clearInterval(counterInterval);
+
+                    // Start exit sequence after reaching 100%
+                    setTimeout(() => {
+                        // Fade out text elements
+                        loadingText.classList.add('fade-out');
+                        percentageElement.classList.add('fade-out');
+                        longfazers.classList.add('fade-out');
+
+                        // Make rocket fly away to the right
+                        rocketBody.classList.add('fly-away');
+
+                        // Start background transition
+                        bodyElement.classList.add('exiting');
+
+                        // Trigger GSAP slice wipe
+                        setTimeout(() => {
+                            gsap.to(".slice", {
+                                y: "0%",
+                                duration: 1,
+                                stagger: 0.10,
+                                ease: "power3.inOut",
+                                onComplete: () => {
+                                    // Redirect to main page and signal entry animation
+                                    window.location.href = 'main.html?entry=1';
+                                }
+                            });
+                        }, 400);
+                    }, 300);
+                } else {
+                    percentageElement.textContent = Math.floor(currentPercentage) + '%';
+                }
+            }, interval);
+        } // End Desktop Heavy Loading
+
+        // Generate drifting ember particles with randomized properties
+        (function createEmbers() {
+            if (!embersContainer || window.innerWidth <= 768) return;
+            const emberCount = Math.min(36, Math.floor(window.innerWidth / 18));
+            for (let i = 0; i < emberCount; i++) {
+                const ember = document.createElement('span');
+                const left = Math.random() * 100; // vw
+                const size = Math.random() * 3 + 2; // 2–5px
+                const duration = Math.random() * 2.8 + 4.2; // 4.2–7s
+                const delay = Math.random() * 2.5; // 0–2.5s
+                const opacity = Math.random() * 0.45 + 0.35; // 0.35–0.8
+                const drift = (Math.random() - 0.5) * 40; // -20–20px
+
+                ember.style.left = left + 'vw';
+                ember.style.setProperty('--size', size + 'px');
+                ember.style.setProperty('--duration', duration + 's');
+                ember.style.setProperty('--delay', delay + 's');
+                ember.style.setProperty('--opacity', opacity);
+                ember.style.setProperty('--drift', drift + 'px');
+                ember.style.setProperty('--drift-start', (drift * -0.25) + 'px');
+
+                embersContainer.appendChild(ember);
+            }
+        })();
+    </script>
+</body>
+
+</html>
