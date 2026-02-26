@@ -330,7 +330,7 @@ function initHeroFrameAnimation() {
             const delta = Math.min((now - lastIdleTime) / 1000, 0.05);
             lastIdleTime = now;
 
-            idleTime += idleDirection * delta * 2.5;
+            idleTime += idleDirection * delta * 1.2;
 
             if (idleTime >= video.duration) {
                 idleTime = video.duration;
