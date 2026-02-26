@@ -360,7 +360,6 @@ a:hover {
 .hero-canvas {
     width: 100%;
     height: 100%;
-    background: #0f0f0f url('Assets/Scroll-frame/ezgif-frame-001.png') center/cover no-repeat;
     will-change: contents;
     transform: translateZ(0);
 }

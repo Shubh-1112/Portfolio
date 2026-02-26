@@ -183,115 +183,50 @@ function setupImageTiltEffect() {
 
 function initHeroFrameAnimation() {
     const canvas = document.getElementById('heroCanvas');
-    if (!canvas) return;
+    const video = document.getElementById('heroVideo');
+    if (!canvas || !video) return;
 
     // Disabled on mobile devices for performance
     if (window.innerWidth <= 768) return;
 
     const ctx = canvas.getContext('2d', { alpha: false });
-    const TOTAL_FRAMES = 232;
-    const FRAME_PATH = 'Assets/Scroll-frame/ezgif-frame-';
-    const bitmaps = new Array(TOTAL_FRAMES); // GPU-ready ImageBitmaps
-    let currentFrame = 0;
-    let targetFrame = 0;
+
     let rafId = null;
-    let imagesReady = false;
-    let lastDrawnIndex = -1;
+    let lastDrawnTime = -1;
+    let videoReady = false;
 
-    // Cached cover-fit dimensions (recalculated on resize)
-    let coverX = 0, coverY = 0, coverW = 0, coverH = 0;
-
-    // --- Canvas sizing (quality-optimized) ---
+    // --- Canvas sizing ---
     function resizeCanvas() {
-        const cssW = window.innerWidth;
-        const cssH = window.innerHeight;
-
-        canvas.width = cssW;
-        canvas.height = cssH;
-        canvas.style.width = cssW + 'px';
-        canvas.style.height = cssH + 'px';
-
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
-
-        // Pre-calculate cover-fit dimensions (all frames are same size)
-        if (bitmaps[0]) {
-            const iw = bitmaps[0].width;
-            const ih = bitmaps[0].height;
-            const scale = Math.max(cssW / iw, cssH / ih);
-            coverW = iw * scale;
-            coverH = ih * scale;
-            coverX = (cssW - coverW) / 2;
-            coverY = (cssH - coverH) / 2;
-        }
-
-        lastDrawnIndex = -1; // force redraw
-        drawFrame(Math.round(currentFrame));
+        lastDrawnTime = -1;
+        drawCurrentFrame();
     }
 
-    // --- Draw a frame on canvas (ultra-fast with ImageBitmap) ---
-    function drawFrame(index) {
-        if (index === lastDrawnIndex) return;
-        const bmp = bitmaps[index];
-        if (!bmp) return;
+    // --- Draw current video frame to canvas (cover-fit) ---
+    function drawCurrentFrame() {
+        if (!videoReady) return;
+        const vw = video.videoWidth;
+        const vh = video.videoHeight;
+        const cw = canvas.width;
+        const ch = canvas.height;
+        if (!vw || !vh) return;
 
-        ctx.drawImage(bmp, coverX, coverY, coverW, coverH);
-        lastDrawnIndex = index;
+        const scale = Math.max(cw / vw, ch / vh);
+        const dw = vw * scale;
+        const dh = vh * scale;
+        const dx = (cw - dw) / 2;
+        const dy = (ch - dh) / 2;
+
+        ctx.drawImage(video, dx, dy, dw, dh);
     }
 
-    // --- Preload & pre-decode all frames into ImageBitmaps ---
-    function preloadFrames() {
-        let loadedCount = 0;
-
-        // Load in batches to avoid overwhelming the browser memory
-        // Reduced batch size and increased delay for low-end device stability
-        const BATCH_SIZE = 20;
-        let nextToLoad = 0;
-
-        function loadBatch() {
-            const end = Math.min(nextToLoad + BATCH_SIZE, TOTAL_FRAMES);
-            for (let i = nextToLoad; i < end; i++) {
-                const idx = i;
-                const num = String(idx + 1).padStart(3, '0');
-
-                fetch(`${FRAME_PATH}${num}.png`)
-                    .then(res => res.blob())
-                    .then(blob => createImageBitmap(blob))
-                    .then(bmp => {
-                        bitmaps[idx] = bmp;
-                        loadedCount++;
-
-                        // Draw first frame immediately
-                        if (idx === 0) {
-                            const iw = bmp.width;
-                            const ih = bmp.height;
-                            const scale = Math.max(canvas.width / iw, canvas.height / ih);
-                            coverW = iw * scale;
-                            coverH = ih * scale;
-                            coverX = (canvas.width - coverW) / 2;
-                            coverY = (canvas.height - coverH) / 2;
-                            lastDrawnIndex = -1;
-                            drawFrame(0);
-                            startIdleAnimation();
-                        }
-
-                        if (loadedCount === TOTAL_FRAMES) {
-                            imagesReady = true;
-                            resizeCanvas();
-                        }
-                    });
-            }
-            nextToLoad = end;
-            if (nextToLoad < TOTAL_FRAMES) {
-                // Increased delay to allow memory garbage collection between chunks
-                setTimeout(loadBatch, 50);
-            }
-        }
-        loadBatch();
-    }
-
-    // --- Map scroll position to frame index ---
-    function getScrollFrame() {
+    // --- Map scroll position to video time ---
+    function getScrollTime() {
         const spacer = document.getElementById('heroSpacer');
         if (!spacer) return 0;
 
@@ -300,25 +235,17 @@ function initHeroFrameAnimation() {
         const viewportH = window.innerHeight;
         const fullMaxScroll = spacerHeight - viewportH;
 
-        // Frame animation completes by the 2nd-to-last frame's scroll position,
-        // so the about section starts scrolling in during the last ~2 frames.
-        // We shorten the effective scroll range to finish frames earlier.
-        const transitionRatio = (TOTAL_FRAMES - 2) / (TOTAL_FRAMES - 1);
+        const transitionRatio = (video.duration - (2 / 24)) / video.duration;
         const frameMaxScroll = fullMaxScroll * transitionRatio;
 
-        // Frame progress (0-1) — frames finish before full scroll
         const frameProgress = Math.min(Math.max(scrollTop / frameMaxScroll, 0), 1);
-
-        // Overall scroll progress (0-1) — tracks full spacer scroll
         const overallProgress = Math.min(Math.max(scrollTop / fullMaxScroll, 0), 1);
 
-        // Start fading out the hero from the 2nd-to-last frame onward
-        // so the about section is revealed underneath
+        // Fade hero section out at end
         const hero = document.getElementById('hero');
         if (hero) {
             if (frameProgress >= 1) {
-                // Fade hero out as we scroll past the 2nd-to-last frame
-                const fadeRange = fullMaxScroll - frameMaxScroll; // scroll distance for fade
+                const fadeRange = fullMaxScroll - frameMaxScroll;
                 const fadeScroll = scrollTop - frameMaxScroll;
                 const fadeOut = Math.min(Math.max(fadeScroll / fadeRange, 0), 1);
                 hero.style.opacity = String(1 - fadeOut);
@@ -329,12 +256,12 @@ function initHeroFrameAnimation() {
             }
         }
 
-        // Fade out hero content in the last 20% of the frame animation
+        // Fade hero content in last 20%
         const heroContent = document.getElementById('heroContent');
         const scrollIndicator = document.querySelector('.scroll-indicator');
         if (heroContent) {
             if (frameProgress > 0.8) {
-                const fadeProgress = (frameProgress - 0.8) / 0.2; // 0 to 1 in last 20%
+                const fadeProgress = (frameProgress - 0.8) / 0.2;
                 heroContent.style.opacity = 1 - fadeProgress;
                 heroContent.style.transform = `translateY(${-fadeProgress * 60}px)`;
             } else if (frameProgress > 0) {
@@ -346,70 +273,74 @@ function initHeroFrameAnimation() {
             scrollIndicator.style.opacity = frameProgress > 0.1 ? '0' : '1';
         }
 
-        return Math.min(Math.floor(frameProgress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
+        return frameProgress * video.duration;
     }
 
-    // --- Smooth interpolation render loop ---
+    // --- Render loop ---
+    let targetTime = 0;
+    let currentTime = 0;
+
+    let isSeeking = false;
+
     function renderLoop() {
-        const diff = targetFrame - currentFrame;
-        if (Math.abs(diff) > 0.3) {
-            // During idle: track tightly for smooth video-like playback
-            // During scroll: ease smoothly
-            // During programmatic full-page jumps: ease VERY smoothly to avoid flashing frames
-            let lerpFactor = idleActive ? 0.5 : 0.38;
-            if (window.__isProgrammaticStaging) {
-                lerpFactor = 0.04; // Extremely slow interpolation to smooth out lightning fast frame updates
-            }
-            currentFrame += diff * lerpFactor;
+        const diff = targetTime - currentTime;
+        if (Math.abs(diff) > 0.001) {
+            currentTime += diff * (idleActive ? 0.5 : 0.38);
         } else {
-            currentFrame = targetFrame;
+            currentTime = targetTime;
         }
 
-        const frameIndex = Math.round(currentFrame);
-        drawFrame(frameIndex);
+        if (!isSeeking && Math.abs(currentTime - lastDrawnTime) > 0.001) {
+            isSeeking = true;
+            video.currentTime = currentTime;
+        }
 
         rafId = requestAnimationFrame(renderLoop);
     }
 
+    // Draw only AFTER the browser has actually decoded the new frame
+    video.addEventListener('seeked', () => {
+        drawCurrentFrame();
+        lastDrawnTime = video.currentTime;
+        isSeeking = false;
+    });
+
     // --- Scroll handler ---
     function onScroll() {
-        targetFrame = getScrollFrame();
+        targetTime = getScrollTime();
+        handleScrollActivity();
     }
 
-    // --- Idle ping-pong when not scrolling (auto-play at top) ---
+    // --- Idle ping-pong animation ---
     let idleDirection = 1;
-    let idleFrame = 0;
+    let idleTime = 0;
     let idleRaf = null;
     let idleActive = false;
     let scrollTimeout = null;
     let lastIdleTime = 0;
 
     function startIdleAnimation() {
-        if (idleActive || !bitmaps[0]) return;
+        if (idleActive || !videoReady) return;
         idleActive = true;
-        idleFrame = currentFrame;
+        idleTime = currentTime;
         lastIdleTime = performance.now();
 
         function idleLoop(now) {
             if (!idleActive) return;
-
-            // Delta-time based for consistent speed regardless of refresh rate
-            const delta = Math.min((now - lastIdleTime) / 1000, 0.05); // cap to avoid jumps
+            const delta = Math.min((now - lastIdleTime) / 1000, 0.05);
             lastIdleTime = now;
 
-            // ~24 frames per second for video-like playback
-            idleFrame += idleDirection * 24 * delta;
+            idleTime += idleDirection * delta * 2.5;
 
-            // Ping-pong within full range
-            if (idleFrame >= TOTAL_FRAMES - 1) {
-                idleFrame = TOTAL_FRAMES - 1;
+            if (idleTime >= video.duration) {
+                idleTime = video.duration;
                 idleDirection = -1;
-            } else if (idleFrame <= 0) {
-                idleFrame = 0;
+            } else if (idleTime <= 0) {
+                idleTime = 0;
                 idleDirection = 1;
             }
 
-            targetFrame = idleFrame;
+            targetTime = idleTime;
             idleRaf = requestAnimationFrame(idleLoop);
         }
         idleRaf = requestAnimationFrame(idleLoop);
@@ -426,25 +357,29 @@ function initHeroFrameAnimation() {
     function handleScrollActivity() {
         stopIdleAnimation();
         clearTimeout(scrollTimeout);
-        // Restart idle after 2s of no scroll at any frame position
         scrollTimeout = setTimeout(() => {
             startIdleAnimation();
         }, 2000);
     }
 
-    // --- Initialize ---
-    preloadFrames();
-    resizeCanvas();
+    // --- Wait for video to be ready ---
+    video.addEventListener('loadedmetadata', () => {
+        videoReady = true;
+        resizeCanvas();
+        renderLoop();
+        startIdleAnimation();
+    });
+
+    // If already loaded (cached)
+    if (video.readyState >= 1) {
+        videoReady = true;
+        resizeCanvas();
+        renderLoop();
+        startIdleAnimation();
+    }
+
     window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('scroll', () => {
-        onScroll();
-        handleScrollActivity();
-    }, { passive: true });
-
-    // Start render loop
-    renderLoop();
-
-    // Idle animation is started automatically once frame 0 is loaded (see preloadFrames)
+    window.addEventListener('scroll', onScroll, { passive: true });
 }
 
 // ============================================
