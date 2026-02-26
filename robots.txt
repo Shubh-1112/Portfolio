@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://thelifeofshubh.netlify.app/sitemap.xml
+Sitemap: https://thelifeofshubh.vercel.app/sitemap.xml
