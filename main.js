@@ -245,7 +245,7 @@ function initHeroFrameAnimation() {
 
         // Load in batches to avoid overwhelming the browser memory
         // Reduced batch size and increased delay for low-end device stability
-        const BATCH_SIZE = 5;
+        const BATCH_SIZE = 20;
         let nextToLoad = 0;
 
         function loadBatch() {
@@ -272,6 +272,7 @@ function initHeroFrameAnimation() {
                             coverY = (canvas.height - coverH) / 2;
                             lastDrawnIndex = -1;
                             drawFrame(0);
+                            startIdleAnimation();
                         }
 
                         if (loadedCount === TOTAL_FRAMES) {
@@ -283,7 +284,7 @@ function initHeroFrameAnimation() {
             nextToLoad = end;
             if (nextToLoad < TOTAL_FRAMES) {
                 // Increased delay to allow memory garbage collection between chunks
-                setTimeout(loadBatch, 150);
+                setTimeout(loadBatch, 50);
             }
         }
         loadBatch();
@@ -355,7 +356,7 @@ function initHeroFrameAnimation() {
             // During idle: track tightly for smooth video-like playback
             // During scroll: ease smoothly
             // During programmatic full-page jumps: ease VERY smoothly to avoid flashing frames
-            let lerpFactor = idleActive ? 0.5 : 0.2;
+            let lerpFactor = idleActive ? 0.5 : 0.38;
             if (window.__isProgrammaticStaging) {
                 lerpFactor = 0.04; // Extremely slow interpolation to smooth out lightning fast frame updates
             }
@@ -384,7 +385,7 @@ function initHeroFrameAnimation() {
     let lastIdleTime = 0;
 
     function startIdleAnimation() {
-        if (idleActive) return;
+        if (idleActive || !bitmaps[0]) return;
         idleActive = true;
         idleFrame = currentFrame;
         lastIdleTime = performance.now();
@@ -443,10 +444,7 @@ function initHeroFrameAnimation() {
     // Start render loop
     renderLoop();
 
-    // Start idle animation initially (user hasn't scrolled yet)
-    setTimeout(() => {
-        startIdleAnimation();
-    }, 500);
+    // Idle animation is started automatically once frame 0 is loaded (see preloadFrames)
 }
 
 // ============================================
@@ -2140,6 +2138,11 @@ function initAboutScrollAnimation() {
 
 function initializePortfolio() {
     perfMonitor.mark('portfolio-init-start');
+
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
 
     // Hide placeholder when image loads
     const aboutPhoto = document.getElementById('aboutPhoto');
