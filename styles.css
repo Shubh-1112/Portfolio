@@ -5280,14 +5280,16 @@ img[alt="Flask"] {
         display: none !important;
     }
 
-    #heroCanvas {
+    .hero-canvas {
+        display: none !important;
+    }
+
+    #heroVideo {
         display: none !important;
     }
 
     .hero-background {
-        background-image: url('/Assets/Scroll-frame/ezgif-frame-001.png');
-        background-size: cover;
-        background-position: center;
+        background: url('Assets/Mobile_background.png') center/cover no-repeat;
     }
 
     /* Projects Section Adjustments */
