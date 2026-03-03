@@ -183,65 +183,102 @@ function setupImageTiltEffect() {
 
 function initHeroFrameAnimation() {
     const canvas = document.getElementById('heroCanvas');
-    const video = document.getElementById('heroVideo');
-    if (!canvas || !video) return;
-
-    // Disabled on mobile devices for performance
+    if (!canvas) return;
     if (window.innerWidth <= 768) return;
 
     const ctx = canvas.getContext('2d', { alpha: false });
-
+    const TOTAL_FRAMES = 232;
+    const FRAME_PATH = 'Assets/Scroll-frames-webp/frame-';
+    const bitmaps = new Array(TOTAL_FRAMES);
+    let currentFrame = 0;
+    let targetFrame = 0;
     let rafId = null;
-    let lastDrawnTime = -1;
-    let videoReady = false;
+    let imagesReady = false;
+    let lastDrawnIndex = -1;
+    let coverX = 0, coverY = 0, coverW = 0, coverH = 0;
 
-    // --- Canvas sizing ---
     function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        canvas.style.width = window.innerWidth + 'px';
-        canvas.style.height = window.innerHeight + 'px';
+        const cssW = window.innerWidth;
+        const cssH = window.innerHeight;
+        canvas.width = cssW;
+        canvas.height = cssH;
+        canvas.style.width = cssW + 'px';
+        canvas.style.height = cssH + 'px';
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
-        lastDrawnTime = -1;
-        drawCurrentFrame();
+        if (bitmaps[0]) {
+            const iw = bitmaps[0].width;
+            const ih = bitmaps[0].height;
+            const scale = Math.max(cssW / iw, cssH / ih);
+            coverW = iw * scale;
+            coverH = ih * scale;
+            coverX = (cssW - coverW) / 2;
+            coverY = (cssH - coverH) / 2;
+        }
+        lastDrawnIndex = -1;
+        drawFrame(Math.round(currentFrame));
     }
 
-    // --- Draw current video frame to canvas (cover-fit) ---
-    function drawCurrentFrame() {
-        if (!videoReady) return;
-        const vw = video.videoWidth;
-        const vh = video.videoHeight;
-        const cw = canvas.width;
-        const ch = canvas.height;
-        if (!vw || !vh) return;
-
-        const scale = Math.max(cw / vw, ch / vh);
-        const dw = vw * scale;
-        const dh = vh * scale;
-        const dx = (cw - dw) / 2;
-        const dy = (ch - dh) / 2;
-
-        ctx.drawImage(video, dx, dy, dw, dh);
+    function drawFrame(index) {
+        if (index === lastDrawnIndex) return;
+        const bmp = bitmaps[index];
+        if (!bmp) return;
+        ctx.drawImage(bmp, coverX, coverY, coverW, coverH);
+        lastDrawnIndex = index;
     }
 
-    // --- Map scroll position to video time ---
-    function getScrollTime() {
+    function preloadFrames() {
+        let loadedCount = 0;
+        const BATCH_SIZE = 20;
+        let nextToLoad = 0;
+
+        function loadBatch() {
+            const end = Math.min(nextToLoad + BATCH_SIZE, TOTAL_FRAMES);
+            for (let i = nextToLoad; i < end; i++) {
+                const idx = i;
+                const num = String(idx + 1).padStart(3, '0');
+                fetch(`${FRAME_PATH}${num}.webp`)
+                    .then(res => res.blob())
+                    .then(blob => createImageBitmap(blob))
+                    .then(bmp => {
+                        bitmaps[idx] = bmp;
+                        loadedCount++;
+                        if (idx === 0) {
+                            const iw = bmp.width;
+                            const ih = bmp.height;
+                            const scale = Math.max(canvas.width / iw, canvas.height / ih);
+                            coverW = iw * scale;
+                            coverH = ih * scale;
+                            coverX = (canvas.width - coverW) / 2;
+                            coverY = (canvas.height - coverH) / 2;
+                            lastDrawnIndex = -1;
+                            drawFrame(0);
+                        }
+                        if (loadedCount === TOTAL_FRAMES) {
+                            imagesReady = true;
+                            resizeCanvas();
+                        }
+                    });
+            }
+            nextToLoad = end;
+            if (nextToLoad < TOTAL_FRAMES) {
+                setTimeout(loadBatch, 50);
+            }
+        }
+        loadBatch();
+    }
+
+    function getScrollFrame() {
         const spacer = document.getElementById('heroSpacer');
         if (!spacer) return 0;
-
         const scrollTop = window.scrollY || window.pageYOffset;
         const spacerHeight = spacer.offsetHeight;
         const viewportH = window.innerHeight;
         const fullMaxScroll = spacerHeight - viewportH;
-
-        const transitionRatio = (video.duration - (2 / 24)) / video.duration;
+        const transitionRatio = (TOTAL_FRAMES - 2) / (TOTAL_FRAMES - 1);
         const frameMaxScroll = fullMaxScroll * transitionRatio;
-
         const frameProgress = Math.min(Math.max(scrollTop / frameMaxScroll, 0), 1);
-        const overallProgress = Math.min(Math.max(scrollTop / fullMaxScroll, 0), 1);
 
-        // Fade hero section out at end
         const hero = document.getElementById('hero');
         if (hero) {
             if (frameProgress >= 1) {
@@ -256,7 +293,6 @@ function initHeroFrameAnimation() {
             }
         }
 
-        // Fade hero content in last 20%
         const heroContent = document.getElementById('heroContent');
         const scrollIndicator = document.querySelector('.scroll-indicator');
         if (heroContent) {
@@ -273,113 +309,40 @@ function initHeroFrameAnimation() {
             scrollIndicator.style.opacity = frameProgress > 0.1 ? '0' : '1';
         }
 
-        return frameProgress * video.duration;
+        return Math.min(Math.floor(frameProgress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
     }
 
-    // --- Render loop ---
-    let targetTime = 0;
-    let currentTime = 0;
-
-    let isSeeking = false;
-
     function renderLoop() {
-        const diff = targetTime - currentTime;
-        if (Math.abs(diff) > 0.001) {
-            currentTime += diff * (idleActive ? 0.5 : 0.38);
+        const diff = targetFrame - currentFrame;
+        if (Math.abs(diff) > 0.3) {
+            currentFrame += diff * (idleActive ? 0.5 : 0.38);
         } else {
-            currentTime = targetTime;
+            currentFrame = targetFrame;
         }
-
-        if (!isSeeking && Math.abs(currentTime - lastDrawnTime) > 0.001) {
-            isSeeking = true;
-            video.currentTime = currentTime;
-        }
-
+        drawFrame(Math.round(currentFrame));
         rafId = requestAnimationFrame(renderLoop);
     }
 
-    // Draw only AFTER the browser has actually decoded the new frame
-    video.addEventListener('seeked', () => {
-        drawCurrentFrame();
-        lastDrawnTime = video.currentTime;
-        isSeeking = false;
-    });
-
-    // --- Scroll handler ---
     function onScroll() {
-        targetTime = getScrollTime();
-        handleScrollActivity();
+        targetFrame = getScrollFrame();
     }
 
-    // --- Idle ping-pong animation ---
-    let idleDirection = 1;
-    let idleTime = 0;
-    let idleRaf = null;
-    let idleActive = false;
-    let scrollTimeout = null;
-    let lastIdleTime = 0;
-
-    function startIdleAnimation() {
-        if (idleActive || !videoReady) return;
-        idleActive = true;
-        idleTime = currentTime;
-        lastIdleTime = performance.now();
-
-        function idleLoop(now) {
-            if (!idleActive) return;
-            const delta = Math.min((now - lastIdleTime) / 1000, 0.05);
-            lastIdleTime = now;
-
-            idleTime += idleDirection * delta * 1.2;
-
-            if (idleTime >= video.duration) {
-                idleTime = video.duration;
-                idleDirection = -1;
-            } else if (idleTime <= 0) {
-                idleTime = 0;
-                idleDirection = 1;
-            }
-
-            targetTime = idleTime;
-            idleRaf = requestAnimationFrame(idleLoop);
-        }
-        idleRaf = requestAnimationFrame(idleLoop);
-    }
-
-    function stopIdleAnimation() {
-        idleActive = false;
-        if (idleRaf) {
-            cancelAnimationFrame(idleRaf);
-            idleRaf = null;
-        }
-    }
+    // Idle animation removed — frames only move on scroll
+    const idleActive = false;
 
     function handleScrollActivity() {
-        stopIdleAnimation();
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            startIdleAnimation();
-        }, 2000);
+        // no-op — idle disabled
     }
 
-    // --- Wait for video to be ready ---
-    video.addEventListener('loadedmetadata', () => {
-        videoReady = true;
-        resizeCanvas();
-        renderLoop();
-        startIdleAnimation();
-    });
-
-    // If already loaded (cached)
-    if (video.readyState >= 1) {
-        videoReady = true;
-        resizeCanvas();
-        renderLoop();
-        startIdleAnimation();
-    }
-
+    preloadFrames();
+    resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('scroll', onScroll, { passive: true });
+    // Bypass Lenis delay for frame sync — use native scroll position directly
+    if (window.__lenis) {
+        window.__lenis.on('scroll', onScroll);
+    }
+    renderLoop();
 }
 
 // ============================================
@@ -441,20 +404,25 @@ function initHeroParticles() {
     const particlesContainer = document.getElementById('heroParticles');
     if (!particlesContainer) return;
 
-    const particleCount = 25;
+    // Skip particles on low-end devices (< 4 CPU cores) to preserve performance
+    if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) return;
+
+    // Reduced from 25 → 12 particles; removed box-shadow glow (heavy GPU cost)
+    const particleCount = 12;
     const colors = ['#b52723', '#e09689', '#ff6b5b', '#ffffff'];
 
+    const fragment = document.createDocumentFragment();
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
 
-        // Random properties
-        const size = Math.random() * 4 + 2;
+        const size = Math.random() * 3 + 2;
         const left = Math.random() * 100;
         const delay = Math.random() * 8;
-        const duration = Math.random() * 4 + 6;
+        const duration = Math.random() * 4 + 8;
         const color = colors[Math.floor(Math.random() * colors.length)];
 
+        // No box-shadow: GPU-heavy paint for a subtle glow that's barely visible
         particle.style.cssText = `
             width: ${size}px;
             height: ${size}px;
@@ -462,11 +430,11 @@ function initHeroParticles() {
             background: ${color};
             animation-delay: ${delay}s;
             animation-duration: ${duration}s;
-            box-shadow: 0 0 ${size * 2}px ${color};
         `;
 
-        particlesContainer.appendChild(particle);
+        fragment.appendChild(particle);
     }
+    particlesContainer.appendChild(fragment);
 }
 
 // ============================================
@@ -599,7 +567,7 @@ function initLenis() {
     }
 
     lenis = new Lenis({
-        duration: 1.2,           // scroll duration (seconds)
+        duration: 0.8,           // scroll duration (seconds)
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo ease-out
         orientation: 'vertical',
         gestureOrientation: 'vertical',
@@ -863,9 +831,10 @@ function setupScrollIndicator() {
 
     if (!scrollIndicator) return;
 
+    const heroEl = document.querySelector('.hero');
+    const heroHeightCached = heroEl ? heroEl.offsetHeight : window.innerHeight;
     window.addEventListener('scroll', () => {
-        const heroHeight = document.querySelector('.hero').offsetHeight;
-        const scrolled = window.scrollY / heroHeight;
+        const scrolled = window.scrollY / heroHeightCached;
 
         if (scrolled > 0.5) {
             scrollIndicator.style.opacity = '0';
@@ -889,17 +858,24 @@ function setupScrollIndicator() {
 // ============================================
 
 function setupParallaxEffects() {
+    // Cache elements once — never query DOM inside scroll handler
+    const parallaxElements = Array.from(document.querySelectorAll('[data-parallax]'));
+    if (parallaxElements.length === 0) return;
+
+    let ticking = false;
     window.addEventListener('scroll', () => {
-        const parallaxElements = document.querySelectorAll('[data-parallax]');
-
-        parallaxElements.forEach(element => {
-            const speed = element.dataset.parallax || 0.5;
-            const rect = element.getBoundingClientRect();
-            const scrolled = window.scrollY + rect.top;
-
-            element.style.transform = `translateY(${(window.scrollY - scrolled) * speed}px)`;
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            parallaxElements.forEach(element => {
+                const speed = element.dataset.parallax || 0.5;
+                const rect = element.getBoundingClientRect();
+                const scrolled = window.scrollY + rect.top;
+                element.style.transform = `translateY(${(window.scrollY - scrolled) * speed}px)`;
+            });
+            ticking = false;
         });
-    });
+    }, { passive: true });
 }
 
 // ============================================
@@ -1655,7 +1631,7 @@ function initSkillsCanvas() {
                 }
             }
         });
-    }, { threshold: 0.05 });
+    }, { threshold: 0.15 });
 
     if (section) observer.observe(section);
 }

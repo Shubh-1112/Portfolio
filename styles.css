@@ -353,8 +353,7 @@ a:hover {
     /* Sharpen upscaled frames */
     image-rendering: auto;
     image-rendering: -webkit-optimize-contrast;
-    /* Subtle sharpening + contrast boost to counteract JPEG blur */
-    filter: contrast(1.03) saturate(1.08);
+    /* filter removed — contrast(1.03) was forcing a full GPU re-composite every frame */
 }
 
 .hero-canvas {
@@ -388,6 +387,9 @@ a:hover {
     z-index: 1;
     pointer-events: none;
     overflow: hidden;
+    /* Isolate particle compositing to its own layer */
+    contain: strict;
+    will-change: contents;
 }
 
 .particle {
@@ -480,12 +482,11 @@ body.entry-revealed #heroContent {
     align-items: center;
     gap: 0.6rem;
     padding: 0.5rem 1.2rem;
-    background: rgba(181, 39, 35, 0.1);
+    background: rgba(181, 39, 35, 0.15);
     border: 1px solid rgba(181, 39, 35, 0.3);
     border-radius: 50px;
     opacity: 1;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    /* backdrop-filter removed — stacking blur inside a fixed hero paints every frame */
 }
 
 .hero-badge:hover {
@@ -771,7 +772,7 @@ body.entry-revealed #heroContent {
     background: transparent;
     color: var(--text-primary);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
+    /* backdrop-filter removed from hero CTA — reduces stacking composite layers */
 }
 
 .hero-cta.secondary:hover {
@@ -814,7 +815,7 @@ body.entry-revealed #heroContent {
         border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
         color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
         box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
+    /* backdrop-filter removed — tiny icons don't need blur and it's expensive in hero */
     will-change: transform, opacity;
 }
 
