@@ -567,13 +567,13 @@ function initLenis() {
     }
 
     lenis = new Lenis({
-        duration: 0.8,           // scroll duration (seconds)
+        duration: 1.2,           // increased duration for a more premium, flowing feel
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo ease-out
         orientation: 'vertical',
         gestureOrientation: 'vertical',
         smoothWheel: true,
-        wheelMultiplier: 1,
-        touchMultiplier: 2,      // responsive mobile touch
+        wheelMultiplier: 1.15,   // increased multiplier for slightly more scroll distance per wheel flick
+        touchMultiplier: 2.2,    // slightly more responsive mobile touch
         infinite: false,
     });
 
@@ -3025,4 +3025,114 @@ if (document.readyState === 'loading') {
 // Cleanup on unload
 window.addEventListener('beforeunload', () => {
     // Graceful cleanup
+});
+
+// ============================================
+// INTERACTIVE WAVY CIRCLE
+// ============================================
+
+function initInteractiveWavyCircle() {
+    const wrapper = document.getElementById('interactiveCircle');
+    const path = document.getElementById('wavyPath');
+    if (!wrapper || !path) return;
+
+    const size = 100; // SVG internal coordinate system (0-200) mid point is 100
+    const radius = 80;
+    const pointsCount = 120;
+    let points = [];
+    
+    // Mouse state
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let hoverState = 0; // 0 to 1
+
+    // Noise/Animation state
+    let time = 0;
+
+    // Initialize points
+    for (let i = 0; i < pointsCount; i++) {
+        points.push({
+            angle: (i / pointsCount) * Math.PI * 2,
+            x: 0,
+            y: 0,
+            originX: 0,
+            originY: 0
+        });
+    }
+
+    function update() {
+        time += 0.02;
+        
+        // Smooth mouse movement
+        mouseX += (targetX - mouseX) * 0.1;
+        mouseY += (targetY - mouseY) * 0.1;
+
+        let d = "";
+        
+        points.forEach((p, i) => {
+            // Base circle
+            const baseRadius = radius;
+            
+            // Animation/Noise wave (Strictly tied to hoverState, extremely subtle when idle)
+            const waviness = 0.1 + (hoverState * 2);
+            const wave = Math.sin(p.angle * 8 + time) * (waviness * 0.4);
+            const wave2 = Math.cos(p.angle * 4 - time * 1.5) * (waviness * 0.6);
+            
+            // Mouse interaction wave
+            // Calculate distance from point to mouse (mapped to SVG coords)
+            const pX = 100 + Math.cos(p.angle) * baseRadius;
+            const pY = 100 + Math.sin(p.angle) * baseRadius;
+            
+            const dx = mouseX - pX;
+            const dy = mouseY - pY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            // Strength based on proximity (within 60 units)
+            const influence = Math.max(0, 1 - dist / 60) * hoverState;
+            const interactionWave = Math.sin(dist * 0.3 - time * 5) * 4 * influence;
+            
+            const r = baseRadius + wave + wave2 + interactionWave;
+            
+            p.x = 100 + Math.cos(p.angle) * r;
+            p.y = 100 + Math.sin(p.angle) * r;
+            
+            if (i === 0) d += `M ${p.x} ${p.y}`;
+            else d += ` L ${p.x} ${p.y}`;
+        });
+        
+        d += " Z";
+        path.setAttribute('d', d);
+        
+        requestAnimationFrame(update);
+    }
+
+    window.addEventListener('mousemove', (e) => {
+        const rect = wrapper.getBoundingClientRect();
+        
+        // Check if cursor is near the wrapper
+        const centerCircleX = rect.left + rect.width / 2;
+        const centerCircleY = rect.top + rect.height / 2;
+        const dxFromCenter = e.clientX - centerCircleX;
+        const dyFromCenter = e.clientY - centerCircleY;
+        const distFromCenter = Math.sqrt(dxFromCenter * dxFromCenter + dyFromCenter * dyFromCenter);
+
+        // Map page mouse to SVG space (-20% to 120% padding considered)
+        targetX = ((e.clientX - rect.left) / rect.width) * 200;
+        targetY = ((e.clientY - rect.top) / rect.height) * 200;
+        
+        if (distFromCenter < 200) {
+            hoverState += (1 - hoverState) * 0.1;
+        } else {
+            hoverState += (0 - hoverState) * 0.1;
+        }
+    });
+
+    update();
+}
+
+// Call init functions when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    initInteractiveWavyCircle();
 });

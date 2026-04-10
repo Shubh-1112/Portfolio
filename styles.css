@@ -4136,6 +4136,17 @@ img[alt="Flask"] {
     border: 2px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 0 16px rgba(181, 39, 35, 0.25);
     flex-shrink: 0;
+    transition: all 0.5s var(--ease-spring);
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+}
+
+.cta-avatar:hover {
+    transform: scale(1.2) rotate(5deg);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    filter: brightness(1.1);
 }
 
 .cta-line-white {
@@ -4189,37 +4200,29 @@ img[alt="Flask"] {
     height: 250px;
     border-radius: 100%;
     position: relative;
-    background: var(--bg-primary);
-    box-shadow: 0 0 60px rgba(181, 39, 35, 0.08);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease-out;
 }
 
-/* Gradient border using pseudo-element */
-.cta-gradient-circle::before {
-    content: '';
+.wavy-svg {
+    width: 120%;
+    height: 120%;
     position: absolute;
-    inset: -5px;
-    border-radius: 100%;
-    padding: 5px;
-    background: conic-gradient(from 0deg,
-            #4a0404,
-            #850f0f,
-            #b52723,
-            #e09689,
-            #fff5f5,
-            #e09689,
-            #b52723,
-            #850f0f,
-            #4a0404);
-    -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    animation: ctaCircleRotate 6s linear infinite;
+    top: -10%;
+    left: -10%;
+    animation: ctaCircleRotate 8s linear infinite;
+    transform-origin: center;
 }
+
+@keyframes ctaCircleRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+/* Gradient border using pseudo-element */
+/* .cta-gradient-circle::before { ... removed/hidden if using SVG ... } */
 
 /* Soft inner glow */
 .cta-gradient-circle::after {
