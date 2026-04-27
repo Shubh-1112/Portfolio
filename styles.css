@@ -3484,13 +3484,19 @@ img[alt="Flask"] {
     }
 
     #hobbies.banner .content {
-        bottom: 0;
-        transform: translateX(-50%);
+        position: relative !important;
+        left: auto !important;
+        transform: none !important;
+        display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
-        padding: 0 16px 20px;
-        gap: 6px;
+        padding: 0px 16px 0px;
+        /* Removed 60px bottom padding to ground the robot */
+        gap: 15px;
+        /* Tighter gap between text elements */
+        width: 100%;
+        order: 2;
     }
 
     #hobbies.banner .content h1 {
@@ -3520,8 +3526,15 @@ img[alt="Flask"] {
     }
 
     #hobbies.banner .content .model {
-        height: 55vh;
-        background-size: auto 75%;
+        position: relative !important;
+        height: 250px;
+        min-height: 250px;
+        width: 100%;
+        background-size: contain;
+        background-position: center bottom;
+        margin-top: 0px;
+        /* Moved closer to text */
+        filter: drop-shadow(0 0 15px rgba(181, 39, 35, 0.15));
     }
 
     .hobbies-decorative-elements {
@@ -3951,13 +3964,17 @@ img[alt="Flask"] {
 
 @media (max-width: 768px) {
     .carousel-modal-overlay {
-        align-items: flex-start;
-        padding: 0.75rem;
+        align-items: center;
+        /* Center to prevent top cut-off */
+        padding: 0.5rem;
+        z-index: 100001;
+        /* Above everything */
     }
 
     .modal-content {
-        max-height: calc(100vh - 1.5rem);
+        max-height: 95vh;
         border-radius: 20px;
+        width: 96%;
     }
 
     .modal-content::before {
@@ -3965,10 +3982,32 @@ img[alt="Flask"] {
     }
 
     .modal-body {
-        flex-direction: column;
+        display: flex !important;
+        flex-direction: column !important;
         min-height: unset;
         max-height: calc(100vh - 1.5rem - 6px);
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-image-side {
+        flex: 0 0 280px !important;
+        min-height: 280px !important;
+        height: 280px !important;
+        width: 100% !important;
+        display: block !important;
+    }
+
+    .modal-image-container {
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    .modal-image-container img {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+        object-fit: contain !important;
     }
 
     .modal-image-side {
@@ -3981,7 +4020,8 @@ img[alt="Flask"] {
     }
 
     .modal-info-side {
-        padding: 1.6rem 1.2rem 1.2rem;
+        padding: 1rem 1rem 1rem;
+        /* Added bottom padding for buffer */
     }
 
     .modal-category-tag {
@@ -4021,6 +4061,9 @@ img[alt="Flask"] {
         width: 34px;
         height: 34px;
         font-size: 1rem;
+        background: rgba(0, 0, 0, 0.5);
+        /* Better visibility on mobile */
+        border-radius: 50%;
     }
 }
 
@@ -4218,9 +4261,15 @@ img[alt="Flask"] {
 }
 
 @keyframes ctaCircleRotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
+
 /* Gradient border using pseudo-element */
 /* .cta-gradient-circle::before { ... removed/hidden if using SVG ... } */
 
@@ -4538,8 +4587,8 @@ img[alt="Flask"] {
 /* ---- Floating Badge Card ---- */
 .mega-footer-badge {
     position: absolute;
-    right: 18%;
-    top: 30%;
+    right: 9.5%;
+    top: 21%;
     z-index: 5;
     /* No auto-animation — hover only */
 }
@@ -5274,6 +5323,35 @@ img[alt="Flask"] {
    ============================================ */
 @media (max-width: 768px) {
 
+    /* Footer Name & Badge Mobile Fixes */
+    .mega-footer-bigname-wrap {
+        overflow: visible !important;
+        margin-top: 60px;
+        /* More space above name */
+    }
+
+    .mega-footer-bigname {
+        padding: 0 15px 4rem !important;
+        /* Added side padding for safety */
+        overflow: visible !important;
+    }
+
+    .bigname-text {
+        font-size: 11vw !important;
+        /* Smaller to guarantee fit */
+        transform: translateY(0) !important;
+        letter-spacing: -0.01em !important;
+    }
+
+    .mega-footer-badge {
+        right: 5% !important;
+        /* Move further left to clear 'm' */
+        top: -50px !important;
+        /* Move much higher up */
+        transform: scale(0.8) rotate(6deg) !important;
+        /* Smaller scale */
+    }
+
     /* Hero Section Adjustments */
     .hero {
         position: relative !important;
@@ -5313,11 +5391,37 @@ img[alt="Flask"] {
     }
 
     .project-item {
-        width: 100% !important;
-        min-width: 100% !important;
+        width: 92% !important;
+        /* Slightly narrower for a card feel */
+        margin: 0 auto 30px !important;
+        /* Center and add gap */
+        min-width: unset !important;
         height: auto !important;
         border-right: none !important;
         border-bottom: 1px solid var(--glass-border) !important;
+        border-left: 1px solid var(--glass-border) !important;
+        /* Adding side borders for definition */
+        border-radius: 20px !important;
+        /* Rounded corners for modern feel */
+        padding-bottom: 15px !important;
+        overflow: hidden;
+    }
+
+    .project-item-inner {
+        padding: 20px 18px 0 !important;
+    }
+
+    .projects-title {
+        font-size: 1.8rem !important;
+        /* More compact header */
+    }
+
+    .project-info h3 {
+        font-size: 1.1rem !important;
+    }
+
+    .project-category {
+        font-size: 0.75rem !important;
     }
 
     .project-item:last-child {
@@ -5372,35 +5476,56 @@ img[alt="Flask"] {
         display: none !important;
     }
 
+    #hobbies.banner {
+        height: auto !important;
+        min-height: 80vh !important;
+        /* Shorter section height */
+        display: flex !important;
+        flex-direction: column !important;
+        padding-top: 80px !important;
+        padding-bottom: 0px !important;
+        /* Connected robot to bottom */
+        overflow: visible !important;
+        position: relative !important;
+    }
+
     #hobbies.banner .slider {
         position: relative !important;
         width: 100% !important;
+        order: 1 !important;
+        margin-top: 0 !important;
         height: auto !important;
         transform: none !important;
         animation: none !important;
         display: flex !important;
         overflow-x: auto !important;
         gap: 15px !important;
-        padding: 20px 15px !important;
+        padding: 30px 20px !important;
+        /* Reduced from 60px */
         justify-content: flex-start !important;
         left: 0 !important;
         top: 0 !important;
-        margin-top: 20px;
-        margin-bottom: 250px;
+        margin-bottom: 60px !important;
+        /* Removed margin to close gap */
         -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        overflow-y: visible !important;
     }
 
     #hobbies.banner .slider .item {
         position: relative !important;
         transform: none !important;
-        width: 160px !important;
-        height: 220px !important;
+        width: 180px !important;
+        /* Slightly larger for better visibility */
+        height: 250px !important;
         flex-shrink: 0 !important;
         inset: auto !important;
         opacity: 1 !important;
+        scroll-snap-align: center;
     }
 
     #hobbies.banner .slider .item img {
+
         border-radius: 12px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
@@ -5428,7 +5553,44 @@ img[alt="Flask"] {
     align-items: center;
     gap: 6px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease, border-color 0.3s ease;
+    /* Invisible until JS removes nav-hidden and adds nav-visible */
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Still hidden during transition */
+.mobile-nav-toggle.nav-hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    animation: none !important;
+}
+
+/* JS adds this class after transition ends — triggers the entrance animation */
+.mobile-nav-toggle.nav-visible {
+    pointer-events: auto;
+    animation: navToggleReveal 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes navToggleReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(-18px) scale(0.82);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translateY(4px) scale(1.06);
+    }
+
+    80% {
+        transform: translateY(-2px) scale(0.97);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .mobile-nav-toggle:hover {
@@ -5523,4 +5685,18 @@ img[alt="Flask"] {
     .bottom-navbar {
         display: none !important;
     }
+}
+
+/* ============================================
+   MOBILE PERFORMANCE OPTIMIZATION
+   ============================================ */
+@media (max-width: 768px) {
+    img {
+        /* Defer offscreen images — reduces initial parse cost */
+        content-visibility: auto;
+    }
+
+    /* NOTE: Removed wildcard animation/transition overrides and the *:hover
+     background-color:inherit rule — those were conflicting with GSAP inline
+     styles and resetting section backgrounds to white on mobile tap. */
 }

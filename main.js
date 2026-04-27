@@ -566,14 +566,21 @@ function initLenis() {
         return;
     }
 
+    // Reduce animation complexity on mobile
+    const isMobile = window.innerWidth < 768;
+
+    if (isMobile && typeof gsap !== 'undefined') {
+        gsap.defaults({ duration: 0.3 }); // Faster animations on mobile
+    }
+
     lenis = new Lenis({
         duration: 1.2,           // increased duration for a more premium, flowing feel
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo ease-out
         orientation: 'vertical',
         gestureOrientation: 'vertical',
         smoothWheel: true,
-        wheelMultiplier: 1.15,   // increased multiplier for slightly more scroll distance per wheel flick
-        touchMultiplier: 2.2,    // slightly more responsive mobile touch
+        wheelMultiplier: isMobile ? 0.9 : 1.15,   // Less aggressive on mobile
+        touchMultiplier: isMobile ? 1.5 : 2.2,    // slightly more responsive mobile touch
         infinite: false,
     });
 
@@ -1128,6 +1135,12 @@ function initEntryOverlay() {
                     onComplete: () => {
                         wrap.remove();
                         document.body.classList.remove('entry-start');
+                        // Reveal mobile nav after transition finishes
+                        const mobileToggle = document.querySelector('.mobile-nav-toggle');
+                        if (mobileToggle) {
+                            mobileToggle.classList.remove('nav-hidden');
+                            mobileToggle.classList.add('nav-visible');
+                        }
                     }
                 });
 
@@ -1159,6 +1172,12 @@ function initEntryOverlay() {
             } else {
                 wrap.remove();
                 document.body.classList.remove('entry-start');
+                // Reveal mobile nav immediately (no GSAP)
+                const mobileToggle = document.querySelector('.mobile-nav-toggle');
+                if (mobileToggle) {
+                    mobileToggle.classList.remove('nav-hidden');
+                    mobileToggle.classList.add('nav-visible');
+                }
             }
 
         }, 100);
@@ -1166,6 +1185,12 @@ function initEntryOverlay() {
         // If not from splash screen, show hero content immediately
         wrap.remove();
         playHeroEntranceAnimation();
+        // Reveal mobile nav immediately (direct visit/reload)
+        const mobileToggle = document.querySelector('.mobile-nav-toggle');
+        if (mobileToggle) {
+            mobileToggle.classList.remove('nav-hidden');
+            mobileToggle.classList.add('nav-visible');
+        }
     }
 }
 

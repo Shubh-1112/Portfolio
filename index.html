@@ -13,6 +13,16 @@
     <meta name="author" content="Shubham Dey">
     <meta name="robots" content="index, follow">
 
+    <!-- DNS Prefetch for external domains (faster connection startup) -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//unpkg.com">
+
+    <!-- Preconnect to critical external resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
     <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:title" content="Shubham Dey | Portfolio">
     <meta property="og:description" content="Developer and UI/UX enthusiast. Explore my journey, projects, and skills.">
@@ -78,7 +88,7 @@
     </div>
 
     <!-- Mobile Hamburger Menu Button -->
-    <button class="mobile-nav-toggle" aria-label="Toggle mobile menu">
+    <button class="mobile-nav-toggle nav-hidden" aria-label="Toggle mobile menu">
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
@@ -525,8 +535,7 @@
                                 style="background-image: url('./Assets/projects/AdAura-Studio.jpeg'); background-size: contain; background-position: center; background-repeat: no-repeat; background-color: #0a0a0a;">
                             </div>
                             <div class="project-image-overlay">
-                                <a href="https://github.com/Shubh-1112" target="_blank"
-                                    class="project-view-btn">
+                                <a href="https://github.com/Shubh-1112" target="_blank" class="project-view-btn">
                                     <span>View Project</span>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2">
@@ -573,7 +582,7 @@
                     </div>
                 </div>
 
-            <div class="project-item" data-index="4">
+                <div class="project-item" data-index="4">
                     <div class="project-item-inner">
                         <div class="project-meta">
                             <div class="project-number">04</div>
@@ -646,35 +655,39 @@
                     <!-- Row 1 - 8 items -->
                     <div class="skills-row">
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/python-svgrepo-com.svg" alt="Python" class="skill-tile-icon">
+                            <img src="./Assets/icons/python-svgrepo-com.svg" alt="Python" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Python</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/C_Programming_Language.svg" alt="C" class="skill-tile-icon">
+                            <img src="./Assets/icons/C_Programming_Language.svg" alt="C" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">C</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/java-svgrepo-com.svg" alt="Java" class="skill-tile-icon">
+                            <img src="./Assets/icons/java-svgrepo-com.svg" alt="Java" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Java</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/javascript-r.svg" alt="Javascript" class="skill-tile-icon">
+                            <img src="./Assets/icons/javascript-r.svg" alt="Javascript" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Javascript</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/html-1.svg" alt="Html" class="skill-tile-icon">
+                            <img src="./Assets/icons/html-1.svg" alt="Html" class="skill-tile-icon" loading="lazy">
                             <div class="skill-tile-name">Html</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/css-3.svg" alt="Css" class="skill-tile-icon">
+                            <img src="./Assets/icons/css-3.svg" alt="Css" class="skill-tile-icon" loading="lazy">
                             <div class="skill-tile-name">Css</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/FastAPI.svg" alt="Figma" class="skill-tile-icon">
+                            <img src="./Assets/icons/FastAPI.svg" alt="Figma" class="skill-tile-icon" loading="lazy">
                             <div class="skill-tile-name">FastAPI</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/docker-4.svg" alt="Docker" class="skill-tile-icon">
+                            <img src="./Assets/icons/docker-4.svg" alt="Docker" class="skill-tile-icon" loading="lazy">
                             <div class="skill-tile-name">Docker</div>
                         </div>
                     </div>
@@ -682,27 +695,31 @@
                     <!-- Row 2 - 6 items -->
                     <div class="skills-row">
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/mysql-svgrepo-com.svg" alt="Mysql" class="skill-tile-icon">
+                            <img src="./Assets/icons/mysql-svgrepo-com.svg" alt="Mysql" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Mysql</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/php-4.svg" alt="Php" class="skill-tile-icon">
+                            <img src="./Assets/icons/php-4.svg" alt="Php" class="skill-tile-icon" loading="lazy">
                             <div class="skill-tile-name">Php</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/flask-svgrepo-com.svg" alt="Flask" class="skill-tile-icon">
+                            <img src="./Assets/icons/flask-svgrepo-com.svg" alt="Flask" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Flask</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/django-svgrepo-com.svg" alt="Django" class="skill-tile-icon">
+                            <img src="./Assets/icons/django-svgrepo-com.svg" alt="Django" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Django</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/visual-studio-code-1-1.svg" alt="Vs Code" class="skill-tile-icon">
+                            <img src="./Assets/icons/visual-studio-code-1-1.svg" alt="Vs Code" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Vs Code</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/git-icon.svg" alt="Git" class="skill-tile-icon">
+                            <img src="./Assets/icons/git-icon.svg" alt="Git" class="skill-tile-icon" loading="lazy">
                             <div class="skill-tile-name">Git</div>
                         </div>
                     </div>
@@ -710,19 +727,22 @@
                     <!-- Row 3 - 4 items -->
                     <div class="skills-row">
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/github-icon-1.svg" alt="Github" class="skill-tile-icon">
+                            <img src="./Assets/icons/github-icon-1.svg" alt="Github" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Github</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/pandas.webp" alt="Pandas" class="skill-tile-icon">
+                            <img src="./Assets/icons/pandas.webp" alt="Pandas" class="skill-tile-icon" loading="lazy">
                             <div class="skill-tile-name">Pandas</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/numpy-svgrepo-com.svg" alt="Numpy" class="skill-tile-icon">
+                            <img src="./Assets/icons/numpy-svgrepo-com.svg" alt="Numpy" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Numpy</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/office-2.svg" alt="Ms Office" class="skill-tile-icon">
+                            <img src="./Assets/icons/office-2.svg" alt="Ms Office" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Ms Office</div>
                         </div>
                     </div>
@@ -730,11 +750,13 @@
                     <!-- Row 4 - 2 items -->
                     <div class="skills-row">
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/bootstrap-svgrepo-com.svg" alt="Bootstrap" class="skill-tile-icon">
+                            <img src="./Assets/icons/bootstrap-svgrepo-com.svg" alt="Bootstrap" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Bootstrap</div>
                         </div>
                         <div class="skill-card-tile">
-                            <img src="./Assets/icons/canva-wordmark-2.svg" alt="Canva" class="skill-tile-icon">
+                            <img src="./Assets/icons/canva-wordmark-2.svg" alt="Canva" class="skill-tile-icon"
+                                loading="lazy">
                             <div class="skill-tile-name">Canva</div>
                         </div>
                     </div>
@@ -845,29 +867,11 @@
             </div>
             <div class="model"></div>
         </div>
-
-        <!-- Modal Overlay -->
-        <div class="carousel-modal-overlay" id="carouselModal">
-            <div class="modal-content">
-                <button class="modal-close" onclick="closeCarouselModal()">&times;</button>
-                <div class="modal-body">
-                    <div class="modal-image-side">
-                        <div class="modal-image-container">
-                            <img id="modalImage" src="" alt="">
-                        </div>
-                    </div>
-                    <div class="modal-info-side">
-                        <div class="modal-category-tag" id="modalCategory">Beyond Work</div>
-                        <h3 id="modalTitle" class="modal-title"></h3>
-                        <div class="modal-divider"></div>
-                        <p id="modalDescription" class="modal-description"></p>
-                        <div class="modal-meta-row">
-                            <div class="modal-meta-dot"></div>
-                            <span class="modal-meta-text">Shubham Dey &nbsp;·&nbsp; Personal Collection</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <span class="modal-meta-text">Shubham Dey &nbsp;·&nbsp; Personal Collection</span>
+        </div>
+        </div>
+        </div>
+        </div>
         </div>
     </section>
 
@@ -890,7 +894,8 @@
                 <div class="cta-gradient-circle" id="interactiveCircle">
                     <svg viewBox="0 0 200 200" class="wavy-svg">
                         <defs>
-                            <linearGradient id="wavyGradient" x1="0%" y1="0%" x2="100%" y2="100%" gradientUnits="userSpaceOnUse">
+                            <linearGradient id="wavyGradient" x1="0%" y1="0%" x2="100%" y2="100%"
+                                gradientUnits="userSpaceOnUse">
                                 <stop offset="0%" style="stop-color:#4a0404;stop-opacity:1" />
                                 <stop offset="25%" style="stop-color:#b52723;stop-opacity:1" />
                                 <stop offset="50%" style="stop-color:#fff5f5;stop-opacity:1" />
@@ -898,7 +903,8 @@
                                 <stop offset="100%" style="stop-color:#4a0404;stop-opacity:1" />
                             </linearGradient>
                         </defs>
-                        <path id="wavyPath" d="" fill="none" stroke="url(#wavyGradient)" stroke-width="4" stroke-linecap="round" />
+                        <path id="wavyPath" d="" fill="none" stroke="url(#wavyGradient)" stroke-width="4"
+                            stroke-linecap="round" />
                     </svg>
                 </div>
             </div>
@@ -918,10 +924,10 @@
                 <!-- Brand Column -->
                 <div class="mega-footer-col mega-footer-brand">
                     <b>
-                        <p class="mega-footer-logo">shubham</p>
+                        <p class="mega-footer-logo">Shubham Dey</p>
                     </b>
-                    <p class="mega-footer-tagline">Building software that actually works. Focused on interfaces you can
-                        feel.</p>
+                    <p class="mega-footer-tagline">Focused on building scalable, real-world solutions and deliver
+                        impactful solutions in a dynamic environment. </p>
                 </div>
 
                 <!-- Navigation Column -->
@@ -935,15 +941,6 @@
                     </ul>
                 </div>
 
-                <!-- Projects Column -->
-                <div class="mega-footer-col">
-                    <h4 class="mega-footer-heading">PROJECTS</h4>
-                    <ul class="mega-footer-links">
-                        <li><a href="https://github.com/Shubh-1112/SignVerse" target="_blank">SignVerse</a></li>
-                        <li><a href="https://github.com/Shubh-1112/FinancePro" target="_blank">FinancePro</a></li>
-                        <li><a href="#hero">Portfolio Website</a></li>
-                    </ul>
-                </div>
 
                 <!-- Socials Column -->
                 <div class="mega-footer-col">
@@ -1019,7 +1016,62 @@
         </svg>
     </button>
 
+    <!-- Modal Overlay (Beyond Work) -->
+    <div class="carousel-modal-overlay" id="carouselModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCarouselModal()">&times;</button>
+            <div class="modal-body">
+                <div class="modal-image-side">
+                    <div class="modal-image-container">
+                        <img id="modalImage" src="" alt="Detail View">
+                    </div>
+                </div>
+                <div class="modal-info-side">
+                    <div class="modal-category-tag" id="modalCategory">Beyond Work</div>
+                    <h2 class="modal-title" id="modalTitle">Project Title</h2>
+                    <div class="modal-divider"></div>
+                    <p class="modal-description" id="modalDescription">Detailed description goes here...</p>
+                    <div class="modal-meta-row">
+                        <div class="modal-meta-item">
+                            <span class="modal-meta-text">Creativity • Passion</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="main.js"></script>
+
+    <script>
+        // Prevent Safari crash if SVG fails to load
+        window.addEventListener('error', function (event) {
+            if (event.filename && event.filename.includes('.svg')) {
+                // Silently continue - don't crash the page
+                event.preventDefault();
+            }
+        }, true);
+
+        // Safety timeout - stop waiting for slow resources after 10 seconds
+        const resourceTimeout = setTimeout(() => {
+            if (document.readyState !== 'complete') {
+                console.warn('Resource loading taking too long, continuing anyway');
+                // Force page to be interactive
+                document.body.style.pointerEvents = 'auto';
+            }
+        }, 10000);
+
+        // Clear timeout when page fully loads
+        window.addEventListener('load', () => {
+            clearTimeout(resourceTimeout);
+        });
+
+        // Handle any unhandled promise rejections (API/resource issues)
+        window.addEventListener('unhandledrejection', (event) => {
+            console.warn('Resource loading issue:', event.reason);
+            event.preventDefault(); // Don't crash
+        });
+    </script>
 </body>
 
 </html>
